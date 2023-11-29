@@ -1,10 +1,11 @@
-import telebot
+iimport telebot
 from telebot import types # для указание типов
 import time
 import datetime
 import subprocess
 import sys
 import os
+import glob
 #from config import *
 config = ""
 # Создаем экземпляр бота
@@ -33,6 +34,10 @@ def add_vpn(message):
     config_file_path = f"/etc/wireguard/{config_string}_cl.conf"
     with open(config_file_path, 'rb') as file:
         bot.send_document(message.chat.id, file)
+
+    with open(config_file_path, 'r') as file:
+        config_content = file.read()
+    bot.send_message(message.chat.id, config_content)
     bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
 
 @bot.message_handler(commands=['start'])
@@ -55,7 +60,7 @@ def func(message):
         if (1==1):
             bot.send_message(message.chat.id, text="Привет хозяин")
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            botton32 = types.KeyboardButton("STATUS")
+            botton32 = types.KeyboardButton("Configs")
             botton42 = types.KeyboardButton("Dell VPN")
             botton41 = types.KeyboardButton("Add VPN")
             botton43 = types.KeyboardButton("STOP")
@@ -74,11 +79,30 @@ def func(message):
         bot.send_message(message.chat.id, "Введите ip, который нужно удалить:")
         bot.register_next_step_handler(message, del_vpn)
     elif message.text == "Add VPN":
-#        subprocess.run(['scripts/add_cl.sh'])
-#        bot.send_message(message.chat.id, "Введите настройки конфигурации:")
-#        bot.register_next_step_handler(message, save_config)
         bot.send_message(message.chat.id, "Введите название нового конфига")
         bot.register_next_step_handler(message, add_vpn)
+    elif message.text == "Configs":
+        bot.send_message(message.chat.id, "Вот ваша конфигурация Wireguard")
+        config_file_path = f"/etc/wireguard/wg0.conf"
+        with open(config_file_path, 'rb') as file:
+            bot.send_document(message.chat.id, file)
+
+        with open(config_file_path, 'r') as file:
+            config_content = file.read()
+        bot.send_message(message.chat.id, config_content)
+
+        file_list = glob.glob('/etc/wireguard/*.conf')
+        for file_path in file_list:
+            if os.path.basename(file_path) != 'wg0.conf':
+                with open(file_path, 'rb') as file:
+                    bot.send_document(message.chat.id, document=file)
+
+        config_file_path_txt = f"cofigs.txt"
+        with open(config_file_path_txt, 'rb') as file:
+            config_content = file.read()
+        bot.send_message(message.chat.id, config_content)
+
+        bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
     elif (message.text == "Back"):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button1 = types.KeyboardButton("👋 MONITOR!")
