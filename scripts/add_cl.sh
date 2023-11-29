@@ -1,7 +1,7 @@
 #!/bin/bash
 
 var_username=$1
-
+var_ip_address_glob2="$ip_address_glob"
 source variables.sh
 ((vap_ip_local++))
 
@@ -25,7 +25,7 @@ DNS = 8.8.8.8
 
 [Peer]
 PublicKey = ${var_public_key}
-Endpoint = ${var_ip_global}:51830
+Endpoint = ${ip_address_glob}:51830
 AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 20" | sudo tee -a /etc/wireguard/${var_username}_cl.conf
 systemctl restart wg-quick@wg0
@@ -33,6 +33,8 @@ systemctl restart wg-quick@wg0
 # Перезаписываем значение переменной vap_ip_local в файле variables.sh
 grep -q "vap_ip_local=" variables.sh && sed -i "s/vap_ip_local=.*/vap_ip_local=${vap_ip_local}/" variables.sh || echo "vap_ip_local=${vap_ip_local}" >> variables.sh
 
+echo "ip_address_glob=${ip_address_glob}" >> variables.sh
 echo "Новый клиент ${var_username} добавлен."
+echo "10.10.0.${vap_ip_local} = ${var_username}" >> cofigs.txt
 
 exit 0
