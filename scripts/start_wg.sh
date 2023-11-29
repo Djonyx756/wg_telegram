@@ -40,4 +40,4 @@ sysctl -p
 systemctl enable wg-quick@wg0.service
 systemctl start wg-quick@wg0.service
 systemctl restart wg-quick@wg0
-echo "Your configs" >> cofigs.txt
+echo "Your configs:" > cofigs.txt
