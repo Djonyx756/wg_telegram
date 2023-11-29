@@ -1,4 +1,4 @@
-iimport telebot
+import telebot
 from telebot import types # для указание типов
 import time
 import datetime
@@ -9,6 +9,8 @@ import glob
 #from config import *
 config = ""
 # Создаем экземпляр бота
+bot = telebot.TeleBot('TELEGRAM API')
+
 def save_config(message):
     global config
     config = message.text
@@ -92,7 +94,7 @@ def func(message):
         bot.send_message(message.chat.id, config_content)
 
 
-        bot.send_message(message.chat.id, "Введите ip, который нужно удалить:")
+        bot.send_message(message.chat.id, "Введите последний октет ip, который нужно удалить. Например если нужно удалить ip адресс 10.10.0.47, то введите 47")
         bot.register_next_step_handler(message, del_vpn)
     elif message.text == "Add VPN":
         bot.send_message(message.chat.id, "Введите название нового конфига")
@@ -120,9 +122,47 @@ def func(message):
 
         bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
     elif message.text == "WG FIRST START":
+        # Проверка наличия файла
+        file_path = '/etc/wireguard/wg0.conf'
+        if os.path.isfile(file_path):
+            print(f"Файл {file_path} существует.")
+            bot.send_message(message.chat.id, "Wireguard файл уже существует")
+            bot.send_message(message.chat.id, "Хотите установить все заново?")
+
+            bot.send_message(message.chat.id, text="Привет хозяин")
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            botton_yes = types.KeyboardButton("YES")
+            botton_no = types.KeyboardButton("NO")
+            markup.add(botton_yes, botton_no)
+            bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
+
+        else:
+            print(f"Файла {file_path} не существует.")
+
+            bot.send_message(message.chat.id, "Запускаю установку Wireguard")
+            subprocess.run(['scripts/start_wg.sh'])
+            bot.send_message(message.chat.id, "Установка Wireguard завершена")
+    elif (message.text == "YES"):
+        bot.send_message(message.chat.id, "Удаляю конфиги!")
+        command = "rm variables.sh && rm -r /etc/wireguard/ && mkdir /etc/wireguard/ && rm cofigs.txt"
+        subprocess.run(command, shell=True)
         bot.send_message(message.chat.id, "Запускаю установку Wireguard")
         subprocess.run(['scripts/start_wg.sh'])
         bot.send_message(message.chat.id, "Установка Wireguard завершена")
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button1 = types.KeyboardButton("👋 MONITOR!")
+        button2 = types.KeyboardButton("ADMIN")
+        markup.add(button1, button2)
+        bot.send_message(message.chat.id, text="Back", reply_markup=markup)
+
+    elif (message.text == "NO"):
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button1 = types.KeyboardButton("👋 MONITOR!")
+        button2 = types.KeyboardButton("ADMIN")
+        markup.add(button1, button2)
+        bot.send_message(message.chat.id, text="Back", reply_markup=markup)
+
     elif (message.text == "Back"):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button1 = types.KeyboardButton("👋 MONITOR!")
