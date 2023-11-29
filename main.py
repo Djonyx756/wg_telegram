@@ -9,8 +9,6 @@ import glob
 #from config import *
 config = ""
 # Создаем экземпляр бота
-bot = telebot.TeleBot('api telegram')
-
 def save_config(message):
     global config
     config = message.text
@@ -22,8 +20,19 @@ def save_config(message):
     return string
 
 def del_vpn(message):
+#    config_file_path_txt = f"cofigs.txt"
+#    with open(config_file_path_txt, 'rb') as file:
+#        config_content = file.read()
+#    bot.send_message(message.chat.id, config_content)
+
     config_string = message.text
     subprocess.run(['scripts/del_cl.sh', config_string])
+    script_path = os.path.dirname(os.path.realpath(__file__))
+    rm_user_script = os.path.join(script_path, "rm_user.sh")
+    subprocess.run([rm_user_script, config_string])
+#    subprocess.run(['systemctl restart wg-quick@wg0.service'])
+
+#    subprocess.run(['rm_user.sh', config_string])
     bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} успешно удален.")
 
 def add_vpn(message):
@@ -76,6 +85,13 @@ def func(message):
             markup.add(botton22, back)
             bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
     elif message.text == "Dell VPN":
+
+        config_file_path_txt = f"cofigs.txt"
+        with open(config_file_path_txt, 'rb') as file:
+            config_content = file.read()
+        bot.send_message(message.chat.id, config_content)
+
+
         bot.send_message(message.chat.id, "Введите ip, который нужно удалить:")
         bot.register_next_step_handler(message, del_vpn)
     elif message.text == "Add VPN":
@@ -103,6 +119,10 @@ def func(message):
         bot.send_message(message.chat.id, config_content)
 
         bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
+    elif message.text == "WG FIRST START":
+        bot.send_message(message.chat.id, "Запускаю установку Wireguard")
+        subprocess.run(['scripts/start_wg.sh'])
+        bot.send_message(message.chat.id, "Установка Wireguard завершена")
     elif (message.text == "Back"):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         button1 = types.KeyboardButton("👋 MONITOR!")
