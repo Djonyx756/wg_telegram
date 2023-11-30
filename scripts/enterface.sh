@@ -6,7 +6,8 @@ internet_interface=$(ip a | awk '/^[0-9]+: .* state UP/ {gsub(/:/,"",$2); print 
 # Проверка наличия интерфейса с доступом в интернет
 if [ -z "$internet_interface" ]; then
   echo "Интерфейс с доступом в интернет не найден."
-  exit 1
+  internet_interface="eth0"
+#  exit 1
 fi
 
 # Получение IP-адреса интерфейса с доступом в интернет
