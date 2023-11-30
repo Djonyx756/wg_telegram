@@ -11,7 +11,8 @@ echo "ip_address_glob=$ip_address_glob" >> variables.sh
 internet_interface=$(ip a | awk '/^[0-9]+: .* state UP/ {gsub(/:/,"",$2); print $2}' | grep -E '^ens[0-9]+')
 if [ -z "$internet_interface" ]; then
   echo "Интерфейс с доступом в интернет не найден."
-  exit 1
+  internet_interface="eth0"
+#  exit 1
 fi
 ip_address=$(ip a show dev $internet_interface | awk '/inet / {split($2, a, "/"); print a[1]}')
 if [ -z "$ip_address" ]; then
