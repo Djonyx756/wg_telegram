@@ -6,6 +6,7 @@ import subprocess
 import sys
 import os
 import glob
+import qrcode
 from config import *
 #from config import *
 config = ""
@@ -21,6 +22,30 @@ def save_config(message):
     string = str(config)
     bot.send_message(message.chat.id, "Настройки конфигурации сохранены")
     return string
+
+def qr(name_qr, chat_id):
+    # Чтение содержимого файла
+    with open(name_qr, 'r') as file:
+        text = file.read()
+
+    # Создание объекта QR-кода
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(text)
+    qr.make(fit=True)
+
+    # Создание изображения QR-кода
+    img = qr.make_image(fill_color='black', back_color='white')
+
+    # Сохранение изображения в файл
+    img_path = "my_qrcode.png"
+    img.save("my_qrcode.png")
+
+    # Отправка QR-кода через Telegram бота
+#    chat_id = 'your_chat_id_here'
+    with open(img_path, 'rb') as f:
+        bot.send_photo(chat_id=chat_id, photo=f)
+    # Удаление QR-кода
+    os.remove(img_path)
 
 def check_message(message):
     valid_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!? ')
@@ -77,8 +102,10 @@ def add_vpn(message):
 #    config_string = message.text
     subprocess.run(['scripts/add_cl.sh', config_string])
     bot.send_message(message.chat.id, f"Конфиг {config_string}.conf создан")
-
     config_file_path = f"/etc/wireguard/{config_string}_cl.conf"
+
+    qr(config_file_path, message.chat.id)
+
     with open(config_file_path, 'rb') as file:
         bot.send_document(message.chat.id, file)
 
