@@ -22,6 +22,12 @@ def save_config(message):
     bot.send_message(message.chat.id, "Настройки конфигурации сохранены")
     return string
 
+def check_message(message):
+    valid_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!? ')
+    new_message = ''.join(c if c in valid_chars else '_' for c in message)
+    new_message = new_message.replace(' ', '_')
+    return new_message
+
 def buttons(message):
     bot.send_message(message.chat.id, text="Привет хозяин")
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -34,8 +40,8 @@ def buttons(message):
     bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
 
 def del_vpn(message):
-
-    config_string = message.text
+    config_string = check_message(message.text)
+#    config_string = message.text
     subprocess.run(['scripts/del_cl.sh', config_string])
     script_path = os.path.dirname(os.path.realpath(__file__))
     rm_user_script = os.path.join(script_path, "rm_user.sh")
@@ -48,7 +54,8 @@ def del_vpn(message):
 
 
 def add_vpn(message):
-    config_string = message.text
+    config_string = check_message(message.text)
+#    config_string = message.text
     subprocess.run(['scripts/add_cl.sh', config_string])
     bot.send_message(message.chat.id, f"Конфиг {config_string}.conf создан")
 
@@ -78,6 +85,9 @@ def id(message):
 
 @bot.message_handler(content_types=['text'])
 def func(message):
+    formatted_message = check_message(message.text)
+    print(formatted_message)
+#    message=formatted_message
     if(message.text == "👋 MONITOR!"):
         bot.send_message(message.chat.id, text="Здесь мониторинг vpn сервера")
         if (1==1):
