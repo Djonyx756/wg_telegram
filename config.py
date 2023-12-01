@@ -1,0 +1,2 @@
+mainid = ""
+api_tg = ""

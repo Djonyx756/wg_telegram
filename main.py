@@ -6,10 +6,11 @@ import subprocess
 import sys
 import os
 import glob
+from config import *
 #from config import *
 config = ""
 # Создаем экземпляр бота
-bot = telebot.TeleBot('API')
+bot = telebot.TeleBot(api_tg)
 
 def save_config(message):
     global config
@@ -21,21 +22,30 @@ def save_config(message):
     bot.send_message(message.chat.id, "Настройки конфигурации сохранены")
     return string
 
+def buttons(message):
+    bot.send_message(message.chat.id, text="Привет хозяин")
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    botton32 = types.KeyboardButton("Configs")
+    botton42 = types.KeyboardButton("Dell_VPN")
+    botton41 = types.KeyboardButton("Add_VPN")
+    botton43 = types.KeyboardButton("STOP")
+    back = types.KeyboardButton("Back")
+    markup.add(botton32, botton41, botton42, botton43, back)
+    bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
+
 def del_vpn(message):
-#    config_file_path_txt = f"cofigs.txt"
-#    with open(config_file_path_txt, 'rb') as file:
-#        config_content = file.read()
-#    bot.send_message(message.chat.id, config_content)
 
     config_string = message.text
     subprocess.run(['scripts/del_cl.sh', config_string])
     script_path = os.path.dirname(os.path.realpath(__file__))
     rm_user_script = os.path.join(script_path, "rm_user.sh")
     subprocess.run([rm_user_script, config_string])
-#    subprocess.run(['systemctl restart wg-quick@wg0.service'])
 
-#    subprocess.run(['rm_user.sh', config_string])
     bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} успешно удален.")
+
+    buttons(message)
+
+
 
 def add_vpn(message):
     config_string = message.text
@@ -50,6 +60,8 @@ def add_vpn(message):
         config_content = file.read()
     bot.send_message(message.chat.id, config_content)
     bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
+
+    buttons(message)
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -69,15 +81,17 @@ def func(message):
     if(message.text == "👋 MONITOR!"):
         bot.send_message(message.chat.id, text="Здесь мониторинг vpn сервера")
         if (1==1):
-            bot.send_message(message.chat.id, text="Привет хозяин")
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            botton32 = types.KeyboardButton("Configs")
-            botton42 = types.KeyboardButton("Dell_VPN")
-            botton41 = types.KeyboardButton("Add_VPN")
-            botton43 = types.KeyboardButton("STOP")
-            back = types.KeyboardButton("Back")
-            markup.add(botton32, botton41, botton42, botton43, back)
-            bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
+            buttons(message)
+
+#            bot.send_message(message.chat.id, text="Привет хозяин")
+#            markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+#            botton32 = types.KeyboardButton("Configs")
+#            botton42 = types.KeyboardButton("Dell_VPN")
+#            botton41 = types.KeyboardButton("Add_VPN")
+#            botton43 = types.KeyboardButton("STOP")
+#            back = types.KeyboardButton("Back")
+#            markup.add(botton32, botton41, botton42, botton43, back)
+#            bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
     elif(message.text == "ADMIN"):
         if (1==1):
             bot.send_message(message.chat.id, text="Привет хозяин")
@@ -87,6 +101,7 @@ def func(message):
             markup.add(botton22, back)
             bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
     elif message.text == "Dell_VPN":
+        bot.send_message(message.chat.id, "Введите последний октет ip, который нужно удалить.", reply_markup=types.ReplyKeyboardRemove())
 
         config_file_path_txt = f"cofigs.txt"
         with open(config_file_path_txt, 'rb') as file:
@@ -96,8 +111,11 @@ def func(message):
 
         bot.send_message(message.chat.id, "Введите последний октет ip, который нужно удалить. Например если нужно удалить ip адресс 10.10.0.47, то введите 47")
         bot.register_next_step_handler(message, del_vpn)
+
+
     elif message.text == "Add_VPN":
-        bot.send_message(message.chat.id, "Введите название нового конфига")
+#        bot.send_message(message.chat.id, "Введите название нового конфига")
+        bot.send_message(message.chat.id, "Введите название нового конфига", reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message, add_vpn)
     elif message.text == "Configs":
         bot.send_message(message.chat.id, "Вот ваша конфигурация Wireguard")
