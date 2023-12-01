@@ -28,6 +28,16 @@ def check_message(message):
     new_message = new_message.replace(' ', '_')
     return new_message
 
+def check_number_in_range(number):
+    try:
+        num = int(number)
+        if 2 <= num <= 253:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
 def buttons(message):
     bot.send_message(message.chat.id, text="Привет хозяин")
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -41,13 +51,22 @@ def buttons(message):
 
 def del_vpn(message):
     config_string = check_message(message.text)
-#    config_string = message.text
-    subprocess.run(['scripts/del_cl.sh', config_string])
-    script_path = os.path.dirname(os.path.realpath(__file__))
-    rm_user_script = os.path.join(script_path, "rm_user.sh")
-    subprocess.run([rm_user_script, config_string])
+    if check_number_in_range(message.text):
+        subprocess.run(['scripts/del_cl.sh', config_string])
+        script_path = os.path.dirname(os.path.realpath(__file__))
+        rm_user_script = os.path.join(script_path, "rm_user.sh")
+        subprocess.run([rm_user_script, config_string])
+        bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} успешно удален.")
+        print(f"{message.text} находится в допустимом диапазоне.")
+    else:
+        print(f"{message.text} не находится в допустимом диапазоне.")
+        bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} не может быть удален. Ввведите число от 2 до 253")
 
-    bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} успешно удален.")
+#    subprocess.run(['scripts/del_cl.sh', config_string])
+#    script_path = os.path.dirname(os.path.realpath(__file__))
+#    rm_user_script = os.path.join(script_path, "rm_user.sh")
+#    subprocess.run([rm_user_script, config_string])
+#    bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} успешно удален.")
 
     buttons(message)
 
