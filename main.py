@@ -9,7 +9,7 @@ import glob
 #from config import *
 config = ""
 # Создаем экземпляр бота
-bot = telebot.TeleBot('TELEGRAM API')
+bot = telebot.TeleBot('API')
 
 def save_config(message):
     global config
@@ -72,8 +72,8 @@ def func(message):
             bot.send_message(message.chat.id, text="Привет хозяин")
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             botton32 = types.KeyboardButton("Configs")
-            botton42 = types.KeyboardButton("Dell VPN")
-            botton41 = types.KeyboardButton("Add VPN")
+            botton42 = types.KeyboardButton("Dell_VPN")
+            botton41 = types.KeyboardButton("Add_VPN")
             botton43 = types.KeyboardButton("STOP")
             back = types.KeyboardButton("Back")
             markup.add(botton32, botton41, botton42, botton43, back)
@@ -82,11 +82,11 @@ def func(message):
         if (1==1):
             bot.send_message(message.chat.id, text="Привет хозяин")
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-            botton22 = types.KeyboardButton("WG FIRST START")
+            botton22 = types.KeyboardButton("WG_FIRST_START")
             back = types.KeyboardButton("Back")
             markup.add(botton22, back)
             bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
-    elif message.text == "Dell VPN":
+    elif message.text == "Dell_VPN":
 
         config_file_path_txt = f"cofigs.txt"
         with open(config_file_path_txt, 'rb') as file:
@@ -96,7 +96,7 @@ def func(message):
 
         bot.send_message(message.chat.id, "Введите последний октет ip, который нужно удалить. Например если нужно удалить ip адресс 10.10.0.47, то введите 47")
         bot.register_next_step_handler(message, del_vpn)
-    elif message.text == "Add VPN":
+    elif message.text == "Add_VPN":
         bot.send_message(message.chat.id, "Введите название нового конфига")
         bot.register_next_step_handler(message, add_vpn)
     elif message.text == "Configs":
@@ -121,7 +121,7 @@ def func(message):
         bot.send_message(message.chat.id, config_content)
 
         bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
-    elif message.text == "WG FIRST START":
+    elif message.text == "WG_FIRST_START":
         # Проверка наличия файла
         file_path = '/etc/wireguard/wg0.conf'
         if os.path.isfile(file_path):
