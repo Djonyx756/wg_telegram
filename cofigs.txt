@@ -1,5 +1,0 @@
-Your configs:
-10.10.0.5 = djonyx
-10.10.0.7 = Lanius
-10.10.0.17 = Mir
-
