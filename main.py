@@ -51,7 +51,7 @@ def check_message(message):
     valid_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!? ')
     new_message = ''.join(c if c in valid_chars else '_' for c in message)
     new_message = new_message.replace(' ', '_')
-    return new_message
+    return new_message.lower().strip()
 
 def check_number_in_range(number):
     try:
@@ -75,17 +75,31 @@ def buttons(message):
     bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
 
 def del_vpn(message):
-    config_string = check_message(message.text)
-    if check_number_in_range(message.text):
-        subprocess.run(['scripts/del_cl.sh', config_string])
-        script_path = os.path.dirname(os.path.realpath(__file__))
-        rm_user_script = os.path.join(script_path, "rm_user.sh")
-        subprocess.run([rm_user_script, config_string])
-        bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} успешно удален.")
-        print(f"{message.text} находится в допустимом диапазоне.")
+    if message.sticker is not None:
+        # Если пользователь отправил стикер вместо текста
+        bot.reply_to(message, 'Пожалуйста, отправьте текстовое сообщение, а не стикер.')
+        buttons(message)
+    elif message.voice is not None:
+        bot.reply_to(message, 'Пожалуйста, отправьте текстовое сообщение, а не голосовое сообщение.')
+        buttons(message)
+    elif message.document is not None:
+        bot.reply_to(message, 'Пожалуйста, отправьте текстовое сообщение, а не документ.')
+        buttons(message)
     else:
-        print(f"{message.text} не находится в допустимом диапазоне.")
-        bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} не может быть удален. Ввведите число от 2 до 253")
+        # Обработка текстового сообщения
+        bot.reply_to(message, 'Вы отправили текстовое сообщение.')
+#####################
+        config_string = check_message(message.text)
+        if check_number_in_range(message.text):
+            subprocess.run(['scripts/del_cl.sh', config_string])
+            script_path = os.path.dirname(os.path.realpath(__file__))
+            rm_user_script = os.path.join(script_path, "rm_user.sh")
+            subprocess.run([rm_user_script, config_string])
+            bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} успешно удален.")
+            print(f"{message.text} находится в допустимом диапазоне.")
+        else:
+            print(f"{message.text} не находится в допустимом диапазоне.")
+            bot.send_message(message.chat.id, f"IP-адрес 10.10.0.{config_string} не может быть удален. Ввведите число от 2 до 253")
 
 #    subprocess.run(['scripts/del_cl.sh', config_string])
 #    script_path = os.path.dirname(os.path.realpath(__file__))
@@ -98,23 +112,32 @@ def del_vpn(message):
 
 
 def add_vpn(message):
-    config_string = check_message(message.text)
-#    config_string = message.text
-    subprocess.run(['scripts/add_cl.sh', config_string])
-    bot.send_message(message.chat.id, f"Конфиг {config_string}.conf создан")
-    config_file_path = f"/etc/wireguard/{config_string}_cl.conf"
-
-    qr(config_file_path, message.chat.id)
-
-    with open(config_file_path, 'rb') as file:
-        bot.send_document(message.chat.id, file)
-
-    with open(config_file_path, 'r') as file:
-        config_content = file.read()
-    bot.send_message(message.chat.id, config_content)
-    bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
-
-    buttons(message)
+    if message.sticker is not None:
+        # Если пользователь отправил стикер вместо текста
+        bot.reply_to(message, 'Пожалуйста, отправьте текстовое сообщение, а не стикер.')
+        buttons(message)
+    elif message.voice is not None:
+        bot.reply_to(message, 'Пожалуйста, отправьте текстовое сообщение, а не голосовое сообщение.')
+        buttons(message)
+    elif message.document is not None:
+        bot.reply_to(message, 'Пожалуйста, отправьте текстовое сообщение, а не документ.')
+        buttons(message)
+    else:
+        # Обработка текстового сообщения
+        bot.reply_to(message, 'Вы отправили текстовое сообщение.')
+##############
+        config_string = check_message(message.text)
+        subprocess.run(['scripts/add_cl.sh', config_string])
+        bot.send_message(message.chat.id, f"Конфиг {config_string}.conf создан")
+        config_file_path = f"/etc/wireguard/{config_string}_cl.conf"
+        qr(config_file_path, message.chat.id)
+        with open(config_file_path, 'rb') as file:
+            bot.send_document(message.chat.id, file)
+        with open(config_file_path, 'r') as file:
+            config_content = file.read()
+        bot.send_message(message.chat.id, config_content)
+        bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
+        buttons(message)
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -123,6 +146,11 @@ def start(message):
     btn2q = types.KeyboardButton("ADMIN")
     markup.add(btn1q, btn2q)
     bot.send_message(message.chat.id, text="Привет, {0.first_name}! управления VPN Wireguard".format(message.from_user), reply_markup=markup)
+
+@bot.message_handler(content_types=['sticker'])
+def handle_sticker(message):
+    # Обработка сообщения со стикером
+    bot.reply_to(message, 'Вы отправили стикер!')
 
 @bot.message_handler(commands=["id"])
 def id(message):
@@ -133,6 +161,10 @@ def id(message):
 def func(message):
     formatted_message = check_message(message.text)
     print(formatted_message)
+
+    if not formatted_message:  # Проверяем, что сообщение не пустое
+        return
+
 #    message=formatted_message
     if(message.text == "👋 MONITOR!"):
         bot.send_message(message.chat.id, text="Здесь мониторинг vpn сервера")
