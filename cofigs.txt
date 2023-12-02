@@ -1,3 +1,0 @@
-Your configs:
-10.10.0.2 = djonyx
-10.10.0.7 = lab
