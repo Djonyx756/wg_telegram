@@ -4,4 +4,4 @@
 
 <div>Запуск:</div>
 <div> pip install --no-cache-dir -r requirements.txt </div>
-<div>python main.py</div>
+<div>python3 main.py</div>
