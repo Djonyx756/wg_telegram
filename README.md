@@ -2,6 +2,6 @@
 Управляй своим Wireguard сервером через Telegram.
 Бот находится в разработке!
 
-Запуск:
-\pip install --no-cache-dir -r requirements.txt
-python main.py
+<div>Запуск:</div>
+<div> pip install --no-cache-dir -r requirements.txt </div>
+<div>python main.py</div>
