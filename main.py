@@ -59,7 +59,7 @@ def check_number_in_range(number):
         return False
 
 def buttons(message):
-    bot.send_message(message.chat.id, text="Привет хозяин")
+#    bot.send_message(message.chat.id, text="Привет хозяин")
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     botton32 = types.KeyboardButton("Конфиги")
     botton42 = types.KeyboardButton("Удалить_конфиг")
@@ -99,7 +99,7 @@ def del_vpn(message):
 
 def add_vpn(message):
     if message.chat.id in mainid:
-        bot.send_message(message.chat.id, text="Привет избранный!!")
+#        bot.send_message(message.chat.id, text="Привет избранный!!")
         if message.sticker is not None:
             # Если пользователь отправил стикер вместо текста
             bot.reply_to(message, 'Пожалуйста, отправьте текстовое сообщение, а не стикер.')
@@ -112,7 +112,7 @@ def add_vpn(message):
             buttons(message)
         else:
             # Обработка текстового сообщения
-            bot.reply_to(message, 'Вы отправили текстовое сообщение.')
+#            bot.reply_to(message, 'Вы отправили текстовое сообщение.')
             config_string = check_message(message.text)
             subprocess.run(['scripts/add_cl.sh', config_string])
             bot.send_message(message.chat.id, f"Конфиг {config_string}.conf создан")
@@ -129,7 +129,7 @@ def add_vpn(message):
 @bot.message_handler(commands=['start'])
 def start(message):
     if message.chat.id in mainid:
-        bot.send_message(message.chat.id, text="Привет избранный!!")
+#        bot.send_message(message.chat.id, text="Привет избранный!!")
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1q = types.KeyboardButton("Мониторинг")
         btn2q = types.KeyboardButton("Администрирование")
@@ -145,23 +145,23 @@ def handle_sticker(message):
 
 @bot.message_handler(commands=["id"])
 def id(message):
-    bot.send_message(message.chat.id, text="Id :"+str(message.chat.id)+"\nuername :"+str(message.from_user.username))
+    bot.send_message(message.chat.id, text="Id :"+str(message.chat.id)+"\nusername :"+str(message.from_user.username))
     print(str(message.chat.id))
 
 @bot.message_handler(content_types=['text'])
 def func(message):
     if message.chat.id in mainid:
-        bot.send_message(message.chat.id, text="Привет избранный!!")
+#        bot.send_message(message.chat.id, text="Привет избранный!!")
         formatted_message = check_message(message.text)
         print(formatted_message)
         if not formatted_message:  # Проверяем, что сообщение не пустое
             return
         if(message.text == "Мониторинг"):
-            bot.send_message(message.chat.id, text="Здесь мониторинг vpn сервера")
+#            bot.send_message(message.chat.id, text="Здесь мониторинг vpn сервера")
             buttons(message)
         elif(message.text == "Администрирование"):
             if (1==1):
-                bot.send_message(message.chat.id, text="Привет хозяин")
+#                bot.send_message(message.chat.id, text="Привет хозяин")
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 botton22 = types.KeyboardButton("Установка_Wireguard")
                 back = types.KeyboardButton("Назад")
@@ -195,26 +195,26 @@ def func(message):
             with open(config_file_path_txt, 'rb') as file:
                 config_content = file.read()
             bot.send_message(message.chat.id, config_content)
-            bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
+#            bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
         elif message.text == "Установка_Wireguard":
             # Проверка наличия файла
             file_path = '/etc/wireguard/wg0.conf'
             if os.path.isfile(file_path):
                 print(f"Файл {file_path} существует.")
-                bot.send_message(message.chat.id, "Wireguard файл уже существует")
-                bot.send_message(message.chat.id, "Хотите установить все заново?")
-                bot.send_message(message.chat.id, text="Привет хозяин")
+#                bot.send_message(message.chat.id, "Wireguard уже настроен. \nХотите настроить заново?")
+#                bot.send_message(message.chat.id, "Хотите установить все заново?")
+#                bot.send_message(message.chat.id, text="Привет хозяин")
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-                botton_yes = types.KeyboardButton("YES")
-                botton_no = types.KeyboardButton("NO")
+                botton_yes = types.KeyboardButton("Да")
+                botton_no = types.KeyboardButton("Нет")
                 markup.add(botton_yes, botton_no)
-                bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
+                bot.send_message(message.chat.id, text="Wireguard уже настроен. \nХотите настроить заново?", reply_markup=markup)
             else:
                 print(f"Файла {file_path} не существует.")
-                bot.send_message(message.chat.id, "Запускаю установку Wireguard")
+                bot.send_message(message.chat.id, "Запускаю установку Wireguard. \nПожалуйста дождитесь завершения установки.")
                 subprocess.run(['scripts/start_wg.sh'])
                 bot.send_message(message.chat.id, "Установка Wireguard завершена")
-        elif (message.text == "YES"):
+        elif (message.text == "Да"):
             bot.send_message(message.chat.id, "Удаляю конфиги!")
             command = "rm variables.sh && rm -r /etc/wireguard/ && mkdir /etc/wireguard/ && rm cofigs.txt"
             subprocess.run(command, shell=True)
@@ -226,7 +226,7 @@ def func(message):
             button2 = types.KeyboardButton("Администрирование")
             markup.add(button1, button2)
             bot.send_message(message.chat.id, text="Назад", reply_markup=markup)
-        elif (message.text == "NO"):
+        elif (message.text == "Нет"):
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             button1 = types.KeyboardButton("Мониторинг")
             button2 = types.KeyboardButton("Администрирование")
