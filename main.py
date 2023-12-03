@@ -134,7 +134,7 @@ def start(message):
         btn1q = types.KeyboardButton("Мониторинг")
         btn2q = types.KeyboardButton("Администрирование")
         markup.add(btn1q, btn2q)
-        bot.send_message(message.chat.id, text="Привет, {0.first_name}! управления VPN Wireguard".format(message.from_user), reply_markup=markup)
+        bot.send_message(message.chat.id, text="{0.first_name}, добро пожаловать в бот управления VPN Wireguard".format(message.from_user), reply_markup=markup)
     elif(str(message.chat.id) != mainid):
         bot.send_message(message.chat.id, text="Привет, {0.first_name}! Ты заплутал!!".format(message.from_user))
 
