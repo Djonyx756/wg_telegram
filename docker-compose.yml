@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mytelegrambot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /etc/wireguard:/etc/wireguard
+#    environment:
+#      VARIABLE_NAME: value
+    network_mode: host
+    ports:
+      - 51830:51830/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: always
