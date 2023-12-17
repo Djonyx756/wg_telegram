@@ -1,7 +1,7 @@
 #!/bin/bash
 source variables.sh
 apt update
-apt install -y wireguard iptables fish
+apt install -y wireguard iptables fish unzip
 
 echo "vap_ip_local=1" > variables.sh
 ip_address_glob=$(curl -s ifconfig.me)

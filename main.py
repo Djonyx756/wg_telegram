@@ -164,8 +164,10 @@ def func(message):
 #                bot.send_message(message.chat.id, text="Привет хозяин")
                 markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
                 botton22 = types.KeyboardButton("Установка_Wireguard")
+                botton_reset = types.KeyboardButton("Сохранить_конигурацию")
+                botton_reset_up = types.KeyboardButton("Импортировать_конигурацию")
                 back = types.KeyboardButton("Назад")
-                markup.add(botton22, back)
+                markup.add(botton22, botton_reset, botton_reset_up, back)
                 bot.send_message(message.chat.id, text="Выполни запрос", reply_markup=markup)
         elif message.text == "Удалить_конфиг":
             bot.send_message(message.chat.id, "Введите последний октет ip, который нужно удалить.", reply_markup=types.ReplyKeyboardRemove())
@@ -196,6 +198,14 @@ def func(message):
                 config_content = file.read()
             bot.send_message(message.chat.id, config_content)
 #            bot.send_message(message.chat.id, "Конфигурационный файл успешно отправлен.")
+        elif message.text == "Сохранить_конигурацию":
+            subprocess.run(['scripts/backup.sh'])
+            print("ok")
+            bot.send_message(message.chat.id, text="Резервная копия создана")
+        elif message.text == "Импортировать_конигурацию":
+            subprocess.run(['scripts/restore.sh'])
+            print("ok2")
+            bot.send_message(message.chat.id, text="Резервная копия импортированна")
         elif message.text == "Установка_Wireguard":
             # Проверка наличия файла
             file_path = '/etc/wireguard/wg0.conf'
