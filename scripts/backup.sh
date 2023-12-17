@@ -23,3 +23,5 @@ cd "$SOURCE_DIR"
 
 # Добавляем файл cofigs.txt в архив без сохранения пути
 zip -j "$BACKUP_FILE" "$SCRIPT_DIR/../cofigs.txt"
+
+systemctl restart wg-quick@wg0

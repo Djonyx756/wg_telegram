@@ -32,3 +32,5 @@ fi
 
 # Перемещаем файл cofigs.txt
 mv cofigs.txt "$SCRIPT_DIR"/..
+
+systemctl restart wg-quick@wg0
