@@ -228,6 +228,16 @@ def func(message):
             bot.send_message(message.chat.id, "Удаляю конфиги!")
             command = "rm variables.sh && rm -r /etc/wireguard/ && mkdir /etc/wireguard/ && rm cofigs.txt"
             subprocess.run(command, shell=True)
+#            # Удаление файла variables.sh
+#            subprocess.run("rm variables.sh", shell=True)
+#            # Удаление каталога /etc/wireguard/
+#            subprocess.run("rm -r /etc/wireguard/", shell=True)
+#            # Пауза для обеспечения времени на завершение предыдущей команды
+#            time.sleep(10)
+#            # Создание каталога /etc/wireguard/
+#            subprocess.run("mkdir /etc/wireguard/", shell=True)
+#            # Удаление файла cofigs.txt
+#            subproces.run("rm cofigs.txt", shell=True)
             bot.send_message(message.chat.id, "Запускаю установку Wireguard")
             subprocess.run(['scripts/start_wg.sh'])
             bot.send_message(message.chat.id, "Установка Wireguard завершена")
@@ -256,3 +266,4 @@ def func(message):
         bot.send_message(message.chat.id, text="Привет, {0.first_name}! Ты заплутал!!".format(message.from_user))
 
 bot.polling(none_stop=True)
+
