@@ -11,6 +11,9 @@ services:
     network_mode: host
     ports:
       - 51830:51830/udp
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
+#    sysctls:
+#      - net.ipv4.conf.all.src_valid_mark=1
+    privileged: true
+    cap_add:
+      - NET_ADMIN   # Добавьте эту строку
     restart: always

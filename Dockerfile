@@ -1,9 +1,11 @@
-# Используем базовый образ Python
-#FROM python:3.9
+# Используем базовый образ Ubuntu
 FROM ubuntu:latest
 
 # Устанавливаем необходимые пакеты
-RUN apt-get update && apt-get install -y python3 python3-pip iproute2 wireguard curl systemctl
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip wireguard-tools curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Создаем виртуальный сетевой интерфейс eth0 внутри контейнера
 RUN ip link add dev ens18 type dummy || true
