@@ -6,7 +6,7 @@ apt install -y wireguard iptables fish zip unzip iproute2
 rm cofigs.txt
 touch cofigs.txt
 echo "vap_ip_local=1" > variables.sh
-ip_address_glob=$(curl -s ifconfig.me)
+ip_address_glob=$(curl -4 icanhazip.com)
 echo "ip_address_glob=$ip_address_glob" >> variables.sh
 
 internet_interface=$(ip a | awk '/^[0-9]+: .* state UP/ {gsub(/:/,"",$2); print $2}' | grep -E '^ens[0-9]+')
